@@ -17,6 +17,22 @@ public class StudentController {
       return new ModelAndView("contact", "command", new Contact());
    }
    
+   @RequestMapping(value = "/sms", method = RequestMethod.GET)
+   public ModelAndView sms() {
+      return new ModelAndView("smspage", "command", new Number());
+   }
+   
+   @RequestMapping(value="/sendsms",method=RequestMethod.POST)
+   public ModelAndView sendsms(@ModelAttribute("SpringWeb")Number number, 
+		   ModelMap model)
+		   {
+	   
+	   		//SendSms.sendsms(number.getnum());
+	   		return new ModelAndView("str", "mysent",SendSms.sendsms(number.getnum()));
+	   
+		   }
+		   
+   
 
    @RequestMapping(value = "/sendmail", method = RequestMethod.POST)
    public ModelAndView sendmail(@ModelAttribute("SpringWeb")Contact contact, 
@@ -31,6 +47,9 @@ public class StudentController {
 	   SendMail.sendm("","",contact.getfrom(), contact.getsubject(), template);
       return new ModelAndView("str", "mysent", contact.getfrom()+" "+contact.getsubject()+" " +contact.getmessage());
 	      }
+   
+  
+   
    
    
 }
