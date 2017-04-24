@@ -1,5 +1,7 @@
 package com.tutorialspoint;
 
+import java.io.IOException;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,6 +13,7 @@ import org.springframework.ui.ModelMap;
 
 @Controller
 public class StudentController {
+	String chathistory;
 
    @RequestMapping(value = "/contact", method = RequestMethod.GET)
    public ModelAndView contact() {
@@ -33,7 +36,35 @@ public class StudentController {
 		   }
 		   
    
-
+   @RequestMapping(value="/chat",method=RequestMethod.GET)
+   public ModelAndView chat1(@ModelAttribute("SpringWeb")Chat chat,ModelMap model)
+   {
+	   chathistory="Bot: Hi please enter your pickup location \n";
+	   return new ModelAndView("chat","command",chathistory);
+   }
+   @RequestMapping(value="/chat",method=RequestMethod.POST)
+   public ModelAndView chat2(@ModelAttribute("SpringWeb")Chat chat,ModelMap model) throws IOException
+   {	
+	   chathistory=chathistory+"\n\nYou:"+chat.getmessage();
+	   
+	   chathistory+="\n\nDectected Location : "+Locationapi.getlocation(chat.getmessage());
+	   
+	   if(chathistory.length()>42&&!(chathistory.contains(chat.str1)))
+	   {
+		   	//System.out.println(chat.getmessage());
+		   
+		    chathistory=chathistory.concat(chat.str1);
+	   }
+	   
+	   if(chathistory.length()>250&&!(chathistory.contains(chat.str2)))
+	   {
+		   	chathistory=chathistory.concat(chat.str2);
+		   	
+	   }
+	  
+	   return new ModelAndView("chat","command",chathistory);
+	   	
+   }
    @RequestMapping(value = "/sendmail", method = RequestMethod.POST)
    public ModelAndView sendmail(@ModelAttribute("SpringWeb")Contact contact, 
 		   ModelMap model) {
@@ -47,6 +78,8 @@ public class StudentController {
 	   SendMail.sendm("","",contact.getfrom(), contact.getsubject(), template);
       return new ModelAndView("str", "mysent", contact.getfrom()+" "+contact.getsubject()+" " +contact.getmessage());
 	      }
+   
+   
    
   
    
